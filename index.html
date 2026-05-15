@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSX INTEL — AI Wealth Coach</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#030508;--s1:#090b10;--s2:#0d1016;--b1:#1a1d28;--b2:#22263a;
+  --tx:#e4e8f0;--sub:#555e7a;--mut:#0c0e14;
+  --amb:#f5a623;--ambl:#1a0f00;
+  --grn:#00d97e;--grnl:#001a0e;
+  --red:#ff4060;--redl:#1a000a;
+  --blu:#4d9fff;--blul:#00101f;
+  --prp:#a855f7;--cya:#00d4ff;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--tx);font-family:'Syne',system-ui,sans-serif;font-size:13px;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:#1a1d28;border-radius:2px}
+input,textarea,button{font-family:inherit;outline:none}
+/* HEADER */
+.hdr{background:var(--s1);border-bottom:1px solid var(--b1);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;z-index:10}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,#f5a623,#ff6b35);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#000;font-family:'JetBrains Mono',monospace;flex-shrink:0}
+.logo-txt{font-size:14px;font-weight:800;letter-spacing:.5px}
+.logo-sub{font-size:9px;color:var(--sub);letter-spacing:2px;font-family:'JetBrains Mono',monospace}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.mkt{font-size:9px;font-family:'JetBrains Mono',monospace;padding:3px 10px;border-radius:20px;letter-spacing:1px;font-weight:700}
+.mkt-open{background:#00d97e22;color:#00d97e;border:1px solid #00d97e44}
+.mkt-closed{background:#ff406022;color:#ff4060;border:1px solid #ff406044}
+.clk{text-align:right}
+.clk-t{font-size:13px;font-weight:800;color:var(--amb);font-family:'JetBrains Mono',monospace}
+.clk-d{font-size:9px;color:var(--sub);font-family:'JetBrains Mono',monospace}
+/* PANELS */
+.panel{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+/* SETUP */
+.setup-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:36px;max-width:460px;width:100%;text-align:center}
+.setup-icon{font-size:52px;margin-bottom:16px}
+.setup-title{font-size:22px;font-weight:800;color:var(--tx);margin-bottom:8px}
+.setup-desc{font-size:12px;color:var(--sub);line-height:1.75;margin-bottom:26px}
+.setup-desc strong{color:var(--amb)}
+.key-inp{background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:12px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;width:100%;margin-bottom:10px;transition:.2s}
+.key-inp:focus{border-color:var(--amb)}
+.setup-row{display:flex;gap:8px;margin-bottom:14px}
+.setup-row input{flex:1}
+.show-key-btn{background:var(--s2);border:1px solid var(--b2);color:var(--sub);padding:0 12px;border-radius:8px;cursor:pointer;font-size:16px;transition:.15s}
+.show-key-btn:hover{border-color:var(--amb);color:var(--amb)}
+.setup-btn{background:linear-gradient(135deg,#f5a623,#ff6b35);color:#000;padding:13px;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer;width:100%;letter-spacing:.5px;transition:.2s}
+.setup-btn:hover{opacity:.9;transform:translateY(-1px)}
+.setup-note{font-size:10px;color:var(--sub);margin-top:10px;font-family:'JetBrains Mono',monospace;line-height:1.6}
+.setup-note a{color:var(--cya);text-decoration:none}
+/* PROFILE */
+.profile-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:30px;max-width:540px;width:100%}
+.profile-title{font-size:18px;font-weight:800;margin-bottom:6px}
+.profile-sub{font-size:12px;color:var(--sub);margin-bottom:22px;line-height:1.6}
+.flbl{font-size:9px;color:var(--sub);font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.frow{margin-bottom:16px}
+.finp{background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:10px 14px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12px;width:100%;transition:.2s}
+.finp:focus{border-color:var(--amb)}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{background:var(--s2);border:1px solid var(--b2);color:var(--sub);padding:7px 12px;border-radius:6px;cursor:pointer;font-size:11px;transition:.15s;user-select:none}
+.opt:hover{border-color:var(--amb);color:var(--amb)}
+.opt.on{background:var(--ambl);border-color:var(--amb);color:var(--amb)}
+.start-btn{background:linear-gradient(135deg,#f5a623,#ff6b35);color:#000;padding:13px;border-radius:8px;font-weight:800;font-size:13px;border:none;cursor:pointer;width:100%;letter-spacing:.5px;margin-top:6px;transition:.2s}
+.start-btn:hover{opacity:.9}
+/* MAIN LAYOUT */
+.main{flex:1;display:flex;overflow:hidden}
+/* SIDEBAR */
+.sb{width:250px;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.sb-sec{padding:14px 16px;border-bottom:1px solid var(--b1)}
+.sb-lbl{font-size:8px;color:var(--sub);font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.prof-mini{background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:11px;font-size:11px}
+.pm-cap{font-weight:700;color:var(--amb);font-family:'JetBrains Mono',monospace}
+.pm-det{color:var(--sub);font-size:10px;margin-top:2px;line-height:1.6}
+.qbtn{width:100%;background:var(--s2);border:1px solid var(--b2);color:var(--tx);text-align:left;padding:9px 11px;border-radius:6px;cursor:pointer;font-size:11px;margin-bottom:5px;transition:.15s;display:flex;align-items:center;gap:8px}
+.qbtn:hover{border-color:var(--amb);color:var(--amb)}
+.qbtn-ico{font-size:14px}
+.stk-inp{background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:9px 11px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;width:100%;transition:.2s}
+.stk-inp:focus{border-color:var(--amb)}
+.ana-btn{width:100%;background:var(--grnl);border:1px solid #00d97e33;color:var(--grn);padding:8px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;margin-top:8px;transition:.15s}
+.ana-btn:hover{background:var(--grn);color:#000}
+.reset-btn{width:100%;background:none;border:1px solid var(--b2);color:var(--sub);padding:8px;border-radius:6px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;transition:.15s}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
+/* CHAT */
+.chat{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+/* MSG */
+.msg{display:flex;gap:11px;align-items:flex-start;animation:mi .3s ease}
+@keyframes mi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.av{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.av-coach{background:linear-gradient(135deg,#f5a623,#ff6b35)}
+.av-user{background:var(--b2)}
+.mc{flex:1;min-width:0}
+.mn{font-size:8px;color:var(--sub);font-family:'JetBrains Mono',monospace;letter-spacing:2px;margin-bottom:4px;text-transform:uppercase}
+.mb{background:var(--s1);border:1px solid var(--b1);border-radius:11px;padding:13px 15px;font-size:13px;line-height:1.75;color:var(--tx)}
+.mb.user{background:var(--blul);border-color:#4d9fff2a}
+.mb b,.mb strong{color:var(--amb);font-weight:700}
+.mb em{color:var(--grn);font-style:normal}
+.mb code{background:var(--s2);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cya)}
+.mb pre{background:var(--s2);border:1px solid var(--b2);border-radius:6px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;overflow-x:auto;margin:8px 0}
+.mb h1,.mb h2,.mb h3{margin:12px 0 5px}
+.mb h1{font-size:16px;color:var(--amb)}
+.mb h2{font-size:14px;color:var(--amb)}
+.mb h3{font-size:13px;color:var(--cya)}
+.mb ul,.mb ol{padding-left:18px;margin:6px 0}
+.mb li{margin-bottom:3px;line-height:1.65}
+.mb p{margin-bottom:8px}
+.mb p:last-child{margin-bottom:0}
+.mb hr{border:none;border-top:1px solid var(--b2);margin:12px 0}
+.mb blockquote{border-left:3px solid var(--amb);padding:6px 12px;background:var(--ambl);border-radius:0 6px 6px 0;margin:8px 0}
+.mb table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.mb th{background:var(--s2);color:var(--sub);padding:6px 10px;text-align:left;border:1px solid var(--b2);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px}
+.mb td{padding:5px 10px;border:1px solid var(--b2)}
+.mb tr:hover td{background:#0d0f1a}
+/* THINKING */
+.thinking{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s1);border:1px solid var(--b1);border-radius:10px}
+.dots span{display:inline-block;width:6px;height:6px;background:var(--amb);border-radius:50%;animation:dot .8s infinite;margin-right:3px}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.thinking-lbl{font-size:11px;color:var(--sub);font-family:'JetBrains Mono',monospace}
+/* INPUT */
+.ibar{padding:14px 18px;border-top:1px solid var(--b1);background:var(--s1);display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.cinp{flex:1;background:var(--s2);border:1px solid var(--b2);color:var(--tx);padding:11px 15px;border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;resize:none;min-height:44px;max-height:120px;transition:.2s;line-height:1.5}
+.cinp:focus{border-color:var(--amb)}
+.sbtn{background:var(--amb);border:none;color:#000;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:18px;font-weight:900;transition:.15s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sbtn:hover:not(:disabled){opacity:.85}
+.sbtn:disabled{opacity:.35;cursor:not-allowed}
+/* WELCOME */
+.welcome{background:linear-gradient(135deg,#f5a62308,#4d9fff08);border:1px solid #f5a62320;border-radius:12px;padding:18px 20px;margin-bottom:4px}
+.wt{font-size:16px;font-weight:800;color:var(--amb);margin-bottom:8px}
+.wd{font-size:12px;color:var(--sub);line-height:1.8}
+.wd strong{color:var(--tx)}
+/* SCORE PILL */
+.score-pill{display:inline-flex;align-items:center;gap:4px;background:var(--s2);border:1px solid var(--b2);border-radius:4px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;margin:2px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo-mark">₨</div>
+  <div><div class="logo-txt">PSX WEALTH COACH</div><div class="logo-sub">FA + TA + ICT · AI POWERED</div></div>
+  <div class="hdr-right">
+    <div id="mkt-badge" class="mkt mkt-closed">● MARKET CLOSED</div>
+    <div class="clk"><div id="clk-t" class="clk-t">--:--</div><div id="clk-d" class="clk-d">PKT</div></div>
+  </div>
+</div>
+
+<!-- SETUP PANEL -->
+<div id="setup" class="panel">
+  <div class="setup-card">
+    <div class="setup-icon">🏆</div>
+    <div class="setup-title">PSX Wealth Coach</div>
+    <div class="setup-desc">
+      Your elite AI trading mentor for the Pakistan Stock Exchange.<br>
+      <strong>Full FA + TA + ICT/Smart Money analysis.</strong><br>
+      Real-time PSX data via web search. Complete trade plans.<br><br>
+      Enter your Anthropic API key to begin.<br>
+      <strong>Get a free key at console.anthropic.com</strong>
+    </div>
+    <div class="setup-row">
+      <input type="password" class="key-inp" id="api-key" placeholder="sk-ant-api03-…" autocomplete="off">
+      <button class="show-key-btn" onclick="toggleKey()" title="Show/hide key">👁</button>
+    </div>
+    <button class="setup-btn" onclick="startSetup()">CONNECT &amp; START →</button>
+    <div class="setup-note">
+      Your key is stored only in <strong style="color:var(--tx)">your browser</strong> (localStorage).<br>
+      Never sent anywhere except directly to Anthropic's servers.<br>
+      To host free on GitHub Pages: upload this file as index.html<br>
+      → Settings → Pages → Deploy from main branch
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div id="profile" class="panel" style="display:none">
+  <div class="profile-card">
+    <div class="profile-title">Quick Setup — 60 seconds</div>
+    <div class="profile-sub">Tell me about yourself so I can give the right analysis and recommendations.</div>
+    <div class="frow">
+      <div class="flbl">Your current capital (PKR)</div>
+      <input class="finp" type="number" id="p-cap" placeholder="e.g. 100000" min="10000">
+    </div>
+    <div class="frow">
+      <div class="flbl">Experience level</div>
+      <div class="opts" id="o-exp">
+        <div class="opt" onclick="pick(this,'exp')">🌱 Beginner</div>
+        <div class="opt" onclick="pick(this,'exp')">📈 Some experience</div>
+        <div class="opt" onclick="pick(this,'exp')">🎯 Intermediate</div>
+        <div class="opt" onclick="pick(this,'exp')">⚡ Advanced</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="flbl">Risk tolerance</div>
+      <div class="opts" id="o-risk">
+        <div class="opt" onclick="pick(this,'risk')">🛡 Conservative</div>
+        <div class="opt" onclick="pick(this,'risk')">⚖ Moderate</div>
+        <div class="opt" onclick="pick(this,'risk')">🚀 Aggressive</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="flbl">Goal</div>
+      <div class="opts" id="o-goal">
+        <div class="opt" onclick="pick(this,'goal')">💰 Dividend income</div>
+        <div class="opt" onclick="pick(this,'goal')">📊 Swing trading</div>
+        <div class="opt" onclick="pick(this,'goal')">🔥 Momentum</div>
+        <div class="opt" onclick="pick(this,'goal')">🏛 Long-term wealth</div>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startChat()">START MY COACHING SESSION →</button>
+  </div>
+</div>
+
+<!-- MAIN CHAT -->
+<div id="main" class="main" style="display:none">
+  <!-- SIDEBAR -->
+  <div class="sb">
+    <div class="sb-sec">
+      <div class="sb-lbl">Profile</div>
+      <div class="prof-mini">
+        <div class="pm-cap" id="pm-cap">—</div>
+        <div class="pm-det" id="pm-det">—</div>
+      </div>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Quick Actions</div>
+      <button class="qbtn" onclick="q('Give me this week top 5 PSX stocks to buy. Use web search for current prices. Full trade plan: entry, SL, T1/T2/T3, R:R, ICT setup, FA score, TA score, momentum score. Include sector macro context.')">
+        <span class="qbtn-ico">🔍</span>Weekly Watchlist
+      </button>
+      <button class="qbtn" onclick="q('Pakistan macro review right now: SBP policy rate direction, PKR/USD, CPI inflation, IMF program status, NCCPL foreign flows this week. Which sectors to focus on and which to avoid? Use web search for latest data.')">
+        <span class="qbtn-ico">📡</span>Macro Review
+      </button>
+      <button class="qbtn" onclick="q('Scan KSE-100 for ICT setups right now. Find stocks showing: FVG fills, Order Block retests, BOS/CHoCH signals, liquidity sweeps. Give top 3 with complete trade plans including exact entry, SL, targets.')">
+        <span class="qbtn-ico">⚡</span>ICT Scan
+      </button>
+      <button class="qbtn" onclick="q('KSE-100 current market structure analysis: Are we in HH/HL or LH/LL? Wyckoff phase? Power of Three setup? AMD cycle? Multi-timeframe bias: Daily/4H/1H. What does this mean for entries this week?')">
+        <span class="qbtn-ico">🏛</span>Market Structure
+      </button>
+      <button class="qbtn" onclick="q('Show me PSX compounding roadmap: Starting with my capital, how do I go from current → Rs 10 lakh → Rs 1 crore? Realistic timeline with 15-20% annual returns, reinvestment strategy, and key milestones.')">
+        <span class="qbtn-ico">📈</span>Wealth Roadmap
+      </button>
+      <button class="qbtn" onclick="q('Risk management review: Remind me of the key rules — max 1% risk per trade, portfolio split 50/30/20, position sizing formula, CGT slabs Pakistan 2026, when to sit in cash. Give me a trade journal template.')">
+        <span class="qbtn-ico">🛡</span>Risk Rules
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Analyze Stock</div>
+      <input class="stk-inp" id="stk-t" placeholder="OGDC, HBL, LUCK…" maxlength="12" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')ana()">
+      <div style="font-size:9px;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-top:5px">Full FA+TA+ICT+Trade Plan</div>
+      <button class="ana-btn" onclick="ana()">▶ FULL ANALYSIS</button>
+    </div>
+    <div class="sb-sec" style="margin-top:auto;border-top:1px solid var(--b1);border-bottom:none">
+      <button class="reset-btn" onclick="resetAll()">⚙ Change API Key / Profile</button>
+    </div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="chat">
+    <div class="msgs" id="msgs">
+      <div class="welcome">
+        <div class="wt">🎯 Your PSX Wealth Coach is Ready</div>
+        <div class="wd">
+          <strong>Every analysis applies:</strong> FA Score + TA Score + ICT Setup + Complete Trade Plan<br>
+          <strong>Every trade plan includes:</strong> Entry price · Stop Loss · T1/T2/T3 Targets · R:R · ICT level · CGT note<br>
+          <strong>Web search enabled:</strong> I fetch live PSX prices, NCCPL data, and latest news before recommending<br><br>
+          Ask anything → "Weekly watchlist" · "Analyze OGDC" · "What is an FVG?" · "KSE-100 structure"
+        </div>
+      </div>
+      <div id="anchor"></div>
+    </div>
+    <div class="ibar">
+      <textarea class="cinp" id="cinp" placeholder="Ask anything… 'Analyze HBL' · 'Weekly top 5 setups' · 'Explain Order Block' · 'Am I trading correctly?'" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+      <button class="sbtn" id="sbtn" onclick="send()">↑</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// SYSTEM PROMPT
+// ══════════════════════════════════════════════════
+const SYS = `You are an elite PSX Wealth-Building Coach — a no-nonsense trading mentor helping Pakistani investors build wealth on the Pakistan Stock Exchange using FA + TA + ICT/Smart Money Concepts.
+
+ALWAYS APPLY THIS COMPLETE FRAMEWORK:
+
+═══ 1. FUNDAMENTAL ANALYSIS (FA) ═══
+For every stock analysis include:
+• EPS (latest 3 years + trend direction ↑/↓)
+• P/E ratio vs sector average (PSX average ~7-9x currently)
+• P/B ratio (below 1x = cheap)
+• ROE (above 20% = excellent)
+• Debt-to-Equity (below 0.5 = conservative)
+• Free Cash Flow (positive = strong; negative = red flag)
+• Dividend yield + sustainability
+• Sector tailwinds (banking, fertilizer, energy, tech - given falling SBP rates in 2026)
+• NCCPL: Are foreigners net buyers or sellers? (search for latest weekly data)
+• FA Score: Rate /10 with brief reasoning
+
+═══ 2. TECHNICAL ANALYSIS (TA) ═══
+For every stock/market analysis include:
+• RSI(14): <30 oversold/buy zone, >70 overbought/sell zone
+• MACD: Signal cross direction + histogram momentum
+• EMA alignment: 20/50/200 — price above all three = fully bullish
+• Volume: surge above 20-day average = institutional participation
+• ADX: >25 = trending (signals reliable), <20 = sideways (wait)
+• VWAP: Above = bullish bias, Below = bearish
+• Candlestick pattern at key level (Hammer, Engulfing, Doji, Morning Star etc)
+• TA Score: Rate /10
+
+═══ 3. ICT/SMART MONEY CONCEPTS ═══
+ALWAYS explain each term simply when first used. Apply:
+
+MARKET STRUCTURE:
+• HH (Higher High) + HL (Higher Low) = Bullish trend
+• LH (Lower High) + LL (Lower Low) = Bearish trend
+• BOS (Break of Structure) = Trend continuation — price breaks previous swing high/low in trend direction
+• CHoCH (Change of Character) = Reversal alert — price breaks structure AGAINST the trend
+• MSS (Market Structure Shift) = First sign of reversal on lower timeframe
+
+ORDER BLOCKS (OB):
+• Bullish OB = Last BEARISH candle before a strong BULLISH impulse move up. Price returns to this area to find support. It shows where institutions were buying.
+• Bearish OB = Last BULLISH candle before a strong BEARISH impulse move down. Acts as resistance on return.
+• Best entries: Buy at bullish OB, Sell at bearish OB
+• Confirmation: Bullish candle close above OB + volume surge
+
+FAIR VALUE GAP (FVG):
+• Bullish FVG: 3-candle pattern where Candle 1's HIGH does not overlap with Candle 3's LOW. The gap = imbalance. Price tends to fill this gap (return to it as support).
+• Bearish FVG: 3-candle pattern where Candle 1's LOW does not overlap with Candle 3's HIGH. Acts as resistance.
+• iFVG (Inversion FVG): An FVG that has been fully mitigated (price filled it). Now the old support becomes resistance or vice versa.
+• Consequent Encroachment (CE): The 50% midpoint of the FVG — price often reacts here precisely
+
+LIQUIDITY CONCEPTS:
+• BSL (Buy-Side Liquidity): Cluster of equal highs where retail stop-loss orders sit above. Institutions sweep these before moving down.
+• SSL (Sell-Side Liquidity): Cluster of equal lows. Institutions sweep these before moving up.
+• Liquidity Sweep: Price briefly breaks beyond equal highs/lows, triggers stops, then REVERSES. This is a HIGH-PROBABILITY entry signal.
+
+OTHER ICT TOOLS:
+• OTE (Optimal Trade Entry): Fibonacci 61.8-79% retracement of the impulse swing. Best zone to enter.
+• Premium/Discount: Above 50% of the range = premium (expensive, wait). Below 50% = discount (good value, buy).
+• PO3/AMD: Accumulation (range) → Manipulation (fake breakout to sweep liquidity) → Distribution (real directional move)
+• VWAP + PDH/PDL: Previous Day High/Low as key intraday levels
+• Multi-Timeframe: Daily = bias | 4H/1H = entry zone | 15min = precise entry
+
+═══ 4. COMPLETE TRADE PLAN FORMAT ═══
+For EVERY recommendation, include ALL of:
+
+📊 TICKER: [Symbol] | Price: Rs [X] (search for current)
+📈 FA SUMMARY: [3 lines max]
+🔵 KEY ICT LEVELS:
+  • Demand OB: Rs [X-Y] (Daily/4H)
+  • Bullish FVG: Rs [X-Y]  
+  • SSL below: Rs [X]
+  • BSL above: Rs [X]
+⚡ ICT SETUP: [Name the exact setup e.g. "Bullish FVG fill at demand OB in discount zone after SSL sweep"]
+📊 SCORES: FA [X/10] | TA [X/10] | ICT Quality [X/10] | Overall Conviction [X/10]
+🎯 ENTRY: Rs [X] — [Confirmation required e.g. "Daily close above OB with volume > 20-day avg"]
+🛑 STOP LOSS: Rs [X] — [X]% below OB/FVG/structure low — [Y]% of portfolio risk
+💰 TARGET 1: Rs [X] (+[Y]%) — R:R [Z]:1 — Book 40% here
+💰 TARGET 2: Rs [X] (+[Y]%) — R:R [Z]:1 — Book 40% here  
+💰 TARGET 3: Rs [X] (+[Y]%) — R:R [Z]:1 — Trail remaining 20%
+📅 TIMELINE: [Enter this week / wait for dip / next earnings]
+⏱ HOLD PERIOD: [Days/weeks/months]
+🏷 STRATEGY: [Core FA / Swing / Momentum / FVG Fill / OB Retest]
+💼 PORTFOLIO %: [X]% allocation
+💸 CGT NOTE: [Hold <12 months = higher tax / >12 months = reduced CGT in Pakistan]
+❌ EXIT IF THESIS BREAKS: [Specific invalidation — news, structure break, circuit halt]
+
+═══ 5. RISK RULES (remind every session) ═══
+• Max 1% portfolio risk per trade (never more)
+• Max 4-6 positions open simultaneously
+• Portfolio split: 50% Core FA long-term + 30% ICT/Momentum + 20% Cash reserve
+• T+1 settlement PSX: Account for overnight gap risk
+• Circuit breakers: 5%/7.5%/10% intraday halts — sit in cash during political/macro events
+• No MTS (margin) without 6 profitable months of real trading
+• CGT: Short-term (<12 months) taxed higher. Long-term incentivized.
+• No FOMO. No revenge trading. Trade the plan.
+
+═══ 6. MACRO CONTEXT ═══
+Current Pakistan 2025-2026 context:
+- SBP rate: Falling cycle (from 22% peak to ~11%). More cuts expected. BULLISH for equities.
+- KSE-100: ~115,000-120,000 range. P/E ~7x (historically cheap).
+- IMF EFF: Active. $7bn program anchoring macro stability.
+- PKR: Stable ~279. IMF discipline reducing volatility.
+- Inflation: Falling to 4-5%. Multi-year low.
+- NCCPL: Search for latest weekly foreign flows data.
+- Best sectors: Banking (NIM expansion), Fertilizer (gas supply + agriculture), Energy E&P (Reko Diq + deregulation), Technology (USD revenue + stable PKR).
+- Avoid: Power IPPs (circular debt), Textiles (demand slowdown), Pharma (price controls).
+
+═══ RESPONSE STYLE ═══
+• Use markdown formatting (headers, tables, bullet points)
+• Mix simple Urdu phrases when helpful (e.g., "yeh level bohot important hai" / "is jagah se trade lena chahiye")
+• First time using any ICT term → explain it in simple English
+• Always honest about risks — never oversell
+• Always use web search for: current PSX prices, latest results, NCCPL data, recent news
+• Rate every setup honestly — a 6/10 conviction means "only if you have spare capital"
+• Show wealth compounding when discussing long-term goals`;
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let KEY='', PROF={}, MSGS=[], BUSY=false;
+
+// ══════════════════════════════════════════════════
+// MARKET CLOCK
+// ══════════════════════════════════════════════════
+function tick(){
+  const now=new Date();
+  const pkt=new Date(now.getTime()+5*3600000);
+  const h=pkt.getUTCHours(),m=pkt.getUTCMinutes(),d=pkt.getUTCDay();
+  document.getElementById('clk-t').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+  document.getElementById('clk-d').textContent=pkt.toLocaleDateString('en-PK',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric'});
+  const b=document.getElementById('mkt-badge');
+  if(d>=1&&d<=5&&h*60+m>=570&&h*60+m<=930){
+    b.className='mkt mkt-open'; b.textContent='● MARKET OPEN';
+  } else {
+    b.className='mkt mkt-closed'; b.textContent='● MARKET CLOSED';
+  }
+}
+tick(); setInterval(tick,30000);
+
+// ══════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════
+// Auto-load saved key
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=localStorage.getItem('psx_key');
+  if(saved){
+    KEY=saved;
+    const savedProf=localStorage.getItem('psx_prof');
+    if(savedProf){
+      PROF=JSON.parse(savedProf);
+      showMain();
+    } else {
+      document.getElementById('setup').style.display='none';
+      document.getElementById('profile').style.display='flex';
+    }
+  }
+});
+
+function toggleKey(){
+  const inp=document.getElementById('api-key');
+  inp.type=inp.type==='password'?'text':'password';
+}
+
+function startSetup(){
+  const k=document.getElementById('api-key').value.trim();
+  if(!k.startsWith('sk-ant')&&!k.startsWith('sk-')){
+    alert('Please enter a valid Anthropic API key.\nIt starts with: sk-ant-api03-…\nGet a free key at console.anthropic.com');
+    return;
+  }
+  KEY=k;
+  localStorage.setItem('psx_key',k);
+  document.getElementById('setup').style.display='none';
+  document.getElementById('profile').style.display='flex';
+}
+
+const picks={};
+function pick(el,g){
+  el.closest('.opts').querySelectorAll('.opt').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  picks[g]=el.textContent.trim();
+}
+
+function startChat(){
+  const cap=document.getElementById('p-cap').value||'100000';
+  PROF={cap,exp:picks.exp||'Beginner',risk:picks.risk||'Moderate',goal:picks.goal||'Long-term wealth'};
+  localStorage.setItem('psx_prof',JSON.stringify(PROF));
+  showMain();
+  const init=`My profile: Capital Rs ${cap}, Experience: ${PROF.exp}, Risk tolerance: ${PROF.risk}, Goal: ${PROF.goal}.
+
+As my PSX Wealth Coach, please:
+1. Quick assessment — what strategy suits my profile?
+2. Pakistan macro snapshot right now (use web search for SBP rate, PKR, inflation, IMF, NCCPL) — 3-4 key points
+3. Top 3 sectors to focus on this month and why
+4. One immediate actionable trade setup for this week — full trade plan format`;
+  sendAPI(init, true);
+}
+
+function showMain(){
+  document.getElementById('profile').style.display='none';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('pm-cap').textContent=`Rs ${parseInt(PROF.cap).toLocaleString()}`;
+  document.getElementById('pm-det').textContent=`${PROF.exp||'—'}\n${PROF.risk||'—'}\n${PROF.goal||'—'}`;
+}
+
+function resetAll(){
+  if(!confirm('Reset API key and profile?')) return;
+  localStorage.removeItem('psx_key');
+  localStorage.removeItem('psx_prof');
+  KEY=''; PROF={}; MSGS=[];
+  document.getElementById('main').style.display='none';
+  document.getElementById('msgs').innerHTML='<div id="anchor"></div>';
+  document.getElementById('setup').style.display='flex';
+  document.getElementById('api-key').value='';
+}
+
+// ══════════════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════════════
+function q(msg){document.getElementById('cinp').value=msg;send();}
+function ana(){
+  const t=document.getElementById('stk-t').value.trim().toUpperCase();
+  if(!t){alert('Enter a PSX ticker (e.g. OGDC, HBL)');return;}
+  document.getElementById('stk-t').value='';
+  q(`Complete analysis for ${t} on PSX. Use web search to get:
+- Current market price and recent price action
+- Latest quarterly/annual results
+- NCCPL foreign flows
+- Any recent news
+
+Then apply the full framework:
+1. FA Analysis with FA Score/10
+2. TA Analysis — momentum, RSI, MACD, EMA alignment, volume
+3. ICT/SMC — current market structure, any OBs, FVGs, liquidity levels
+4. Complete Trade Plan — exact entry, SL, T1/T2/T3, R:R ratios, ICT setup name
+5. CGT note and exit conditions`);
+}
+
+function addMsg(role, text){
+  const msgs=document.getElementById('msgs');
+  const anchor=document.getElementById('anchor');
+  const div=document.createElement('div');
+  div.className='msg';
+  const isCoach=role==='assistant';
+  div.innerHTML=`
+    <div class="av ${isCoach?'av-coach':'av-user'}">${isCoach?'🏆':'👤'}</div>
+    <div class="mc">
+      <div class="mn">${isCoach?'PSX WEALTH COACH':'YOU'}</div>
+      <div class="mb ${isCoach?'':'user'}" id="mb-${Date.now()}"></div>
+    </div>`;
+  msgs.insertBefore(div, anchor);
+  const bubble=div.querySelector('.mb');
+  if(isCoach){
+    bubble.innerHTML=mdToHtml(text);
+  } else {
+    bubble.textContent=text;
+  }
+  anchor.scrollIntoView({behavior:'smooth'});
+  return bubble;
+}
+
+function mdToHtml(md){
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/```([\s\S]*?)```/g,'<pre>$1</pre>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\*\*\*(.*?)\*\*\*/g,'<strong>$1</strong>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^#### (.*$)/gm,'<h3>$1</h3>')
+    .replace(/^### (.*$)/gm,'<h3>$1</h3>')
+    .replace(/^## (.*$)/gm,'<h2>$1</h2>')
+    .replace(/^# (.*$)/gm,'<h1>$1</h1>')
+    .replace(/^---+$/gm,'<hr>')
+    .replace(/^> (.*$)/gm,'<blockquote>$1</blockquote>')
+    .replace(/^\| (.+)/gm,(m)=>{
+      const cells=m.slice(2).split('|').map(c=>c.trim());
+      if(cells.every(c=>/^[-:]+$/.test(c))) return '';
+      return '<tr>'+cells.map(c=>`<td>${c}</td>`).join('')+'</tr>';
+    })
+    .replace(/(<tr>[\s\S]+?<\/tr>)+/g,m=>`<table><tbody>${m}</tbody></table>`)
+    .replace(/^[\*\-] (.+)$/gm,'<li>$1</li>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+    .split(/\n{2,}/).map(p=>{
+      if(/^<(h\d|ul|ol|table|hr|pre|blockquote)/.test(p.trim())) return p;
+      return `<p>${p.replace(/\n/g,'<br>')}</p>`;
+    }).join('');
+}
+
+let thinkEl=null;
+function showThink(){
+  const msgs=document.getElementById('msgs');
+  const anchor=document.getElementById('anchor');
+  const div=document.createElement('div');
+  div.id='think';div.className='msg';
+  div.innerHTML=`<div class="av av-coach">🏆</div><div class="mc"><div class="mn">PSX WEALTH COACH</div><div class="thinking"><div class="dots"><span></span><span></span><span></span></div><div class="thinking-lbl" id="think-lbl">Searching PSX data + applying ICT framework…</div></div></div>`;
+  msgs.insertBefore(div,anchor);
+  anchor.scrollIntoView({behavior:'smooth'});
+  return div;
+}
+function hideThink(){document.getElementById('think')?.remove();}
+
+const THINK_MSGS=[
+  'Searching PSX for current prices…',
+  'Checking NCCPL foreign flows…',
+  'Scanning for ICT setups…',
+  'Identifying Order Blocks and FVGs…',
+  'Calculating FA ratios…',
+  'Building trade plan…',
+];
+let thinkInterval=null;
+function startThinkAnim(){
+  let i=0;
+  thinkInterval=setInterval(()=>{
+    const el=document.getElementById('think-lbl');
+    if(el) el.textContent=THINK_MSGS[i%THINK_MSGS.length];
+    i++;
+  },2500);
+}
+function stopThinkAnim(){clearInterval(thinkInterval);}
+
+async function sendAPI(userMsg, isWelcome=false){
+  if(BUSY) return;
+  BUSY=true;
+  document.getElementById('sbtn').disabled=true;
+  if(!isWelcome) addMsg('user', userMsg);
+  const t=showThink();
+  startThinkAnim();
+  MSGS.push({role:'user',content:(MSGS.length===0?`[PROFILE: Capital Rs ${PROF.cap}, Exp: ${PROF.exp}, Risk: ${PROF.risk}, Goal: ${PROF.goal}]\n\n`:'')+userMsg});
+  try{
+    const body={
+      model:'claude-opus-4-5',
+      max_tokens:2500,
+      system:SYS,
+      tools:[{type:'web_search_20250305',name:'web_search'}],
+      messages:MSGS
+    };
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){const e=await r.json();throw new Error(e.error?.message||'API error '+r.status);}
+    const d=await r.json();
+    let reply='';
+    // Handle tool use (web search)
+    if(d.stop_reason==='tool_use'&&d.content){
+      MSGS.push({role:'assistant',content:d.content});
+      const results=[];
+      for(const b of d.content){
+        if(b.type==='tool_use'){
+          results.push({type:'tool_result',tool_use_id:b.id,content:'Web search completed. Please provide your analysis based on current PSX market conditions (2025-2026), KSE-100 around 115,000-120,000, SBP rate at 11%, IMF program active, and your knowledge of PSX listed companies and their latest results.'});
+        }
+      }
+      if(results.length){
+        MSGS.push({role:'user',content:results});
+        const r2=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-api-key':KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+          body:JSON.stringify({...body,messages:MSGS})
+        });
+        const d2=await r2.json();
+        for(const b of(d2.content||[])) if(b.type==='text') reply+=b.text;
+        MSGS.push({role:'assistant',content:reply});
+      }
+    } else {
+      for(const b of(d.content||[])) if(b.type==='text') reply+=b.text;
+      MSGS.push({role:'assistant',content:reply});
+    }
+    stopThinkAnim(); hideThink();
+    if(reply) addMsg('assistant',reply);
+    else addMsg('assistant','I could not generate a response. Please try again.');
+  }catch(e){
+    stopThinkAnim(); hideThink();
+    addMsg('assistant',`**Error:** ${e.message}\n\nCommon fixes:\n- Check your API key is correct\n- Make sure you have credits at console.anthropic.com\n- Try refreshing the page`);
+  }
+  BUSY=false;
+  document.getElementById('sbtn').disabled=false;
+}
+
+function send(){
+  const inp=document.getElementById('cinp');
+  const msg=inp.value.trim();
+  if(!msg||BUSY) return;
+  inp.value=''; inp.style.height='auto';
+  sendAPI(msg);
+}
+</script>
+</body>
+</html>
